@@ -15,23 +15,45 @@ app.get('/', (req, res) => {
 })
 
 app.get('/about', (req, res) => {
-    // res.send('hello home')
-    // musicData.getAlbums().then((data) => {
-    //     res.send(data)
-    // })
     res.sendFile(path.join(__dirname, '/views/about.html'));
 })
 
 app.get('/blog', (req, res) => {
-    res.send('TODO: get all posts who have published==true')
+    // res.send('TODO: get all posts who have published==true')
+    blogService.getPublishedPosts().then((data) => {
+        res.json(data);
+    }).catch((error) => {
+        res.status(404).send("Error!")
+    })
+
 })
 
 app.get('/posts', (req, res) => {
-    res.send('hello posts')
+    // res.send('hello posts');
+    blogService.getAllPosts().then((data) => {
+        res.json(data);
+    }).catch((error) => {
+        res.status(404).send("Error!")
+    })
+
 })
 
 app.get('/categories', (req, res) => {
-    res.send('hello categories')
+    // res.send('hello categories')
+    blogService.getCategories().then((data) => {
+        res.json(data);
+    }).catch((error) => {
+        res.status(404).send("Error!")
+    })
+
 })
 
-app.listen(HTTP_PORT, onHttptart);
+app.use((req, res) => {
+    res.status(404).send("Page Not Found")
+})
+
+blogService.initialize().then((data) => {
+    app.listen(HTTP_PORT, onHttptart);
+}).catch((error) => {
+    res.status(404).send("Error loading data!")
+})
