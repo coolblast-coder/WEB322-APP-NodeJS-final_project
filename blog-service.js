@@ -5,7 +5,7 @@ const { resolve } = require('path/posix');
 let posts = [];
 let categories = [];
 
-module.exports.initialize = function() {
+module.exports.initialize = function () {
     return new Promise((resolve, reject) => {
         fs.readFile('./data/posts.json', 'utf-8', (err, data) => {
             if (err) {
@@ -27,7 +27,7 @@ module.exports.initialize = function() {
     })
 }
 
-module.exports.getAllPosts = function() {
+module.exports.getAllPosts = function () {
     return new Promise((resolve, reject) => {
         if (posts && posts.length > 0)
             resolve(posts);
@@ -38,7 +38,7 @@ module.exports.getAllPosts = function() {
     })
 }
 
-module.exports.getPublishedPosts = function() {
+module.exports.getPublishedPosts = function () {
     var publishedPost = [];
 
     for (var i = 0; i < posts.length; i++) {
@@ -56,7 +56,7 @@ module.exports.getPublishedPosts = function() {
     })
 }
 
-module.exports.getCategories = function() {
+module.exports.getCategories = function () {
     return new Promise((resolve, reject) => {
         if (categories && categories.length > 0)
             resolve(categories);
@@ -64,5 +64,58 @@ module.exports.getCategories = function() {
             reject("no results returned");
         }
 
+    })
+}
+
+module.exports.addPost = function (postData) {
+
+    return new Promise((resolve, reject) => {
+        if (postData.published) {
+            postData.published = true;
+        }
+        else {
+            postData.published = false;
+        }
+        postData.id = (posts.length + 1);
+        posts.push(postData);
+        resolve(postData);
+    })
+}
+
+module.exports.getPostsByCategory = function (category) {
+    return new Promise((resolve, reject) => {
+        let categoryPost = posts.filter(a => a.category == category);
+        if (categoryPost.length != 0) {
+            resolve(categoryPost);
+        }
+        else {
+            reject("no results returned");
+        }
+    })
+
+}
+
+module.exports.getPostsByMinDate = function (minDateStr) {
+    return new Promise((resolve, reject) => {
+        let datePost = posts.filter(a => new Date(a.postDate) > new Date(minDateStr));
+        if (datePost.length != 0) {
+            resolve(datePost);
+        }
+        else {
+            reject("no results returned");
+        }
+    })
+
+}
+
+module.exports.getPostById = function (id) {
+    return new Promise((resolve, reject) => {
+        let idPost = posts.filter(a => a.id == id);
+if (idPost.length !=0){
+    resolve(idPost);
+}
+else{
+    reject("no results returned");
+}
     })
 }
