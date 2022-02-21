@@ -1,16 +1,17 @@
 /*********************************************************************************
- *  WEB322 – Assignment 02
- *  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part
- *  of this assignment has been copied manually or electronically from any other source
- *  (including 3rd party web sites) or distributed to other students.
- *
- *  Name: Anton Lyapunov Student ID: 048687131 Date: 2022-02-06
- *
- *  Online (Heroku) URL: https://pacific-cliffs-09871.herokuapp.com/
- *
- *  GitHub Repository URL: https://github.com/coolblast-coder/WEB322-APP
- *
- ********************************************************************************/
+*  WEB322 – Assignment 03
+*  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part 
+*  of this assignment has been copied manually or electronically from any other source 
+*  (including 3rd party web sites) or distributed to other students.
+* 
+*  Name: Anton Lyapunov Student ID: 048687131 Date: 2022-02-20
+*
+*  Heroku App URL: ___________________________________________________________
+* 
+*  GitHub Repository URL: https://github.com/coolblast-coder/WEB322-APP
+*
+********************************************************************************/ 
+
 
 const express = require('express');
 const app = express();
@@ -60,12 +61,31 @@ app.get('/blog', (req, res) => {
 
 app.get('/posts', (req, res) => {
     // res.send('hello posts');
+
+    let category = req.query.category;
+    let minDate = req.query.minDate;
+
+    if(category){
+    blogService.getPostsByCategory(category).then((data) => {
+        res.json(data);
+    }).catch((error) => {
+        res.status(404).send("Error!")
+    })
+}
+else if(minDate != "" && minDate != null){
+    blogService.getPostsByMinDate(minDate).then((data) => {
+        res.json(data);
+    }).catch((error) => {
+        res.status(404).send("Error!")
+    })
+}
+else{
     blogService.getAllPosts().then((data) => {
         res.json(data);
     }).catch((error) => {
         res.status(404).send("Error!")
     })
-
+}
 })
 
 app.get('/categories', (req, res) => {
@@ -81,6 +101,55 @@ app.get('/categories', (req, res) => {
 app.get('/posts/add', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/addPost.html'));
 })
+
+app.post('/posts/add', upload.single("featureImage"), (req, res) => {
+    if (req.file) {
+        let streamUpload = (req) => {
+            return new Promise((resolve, reject) => {
+                let stream = cloudinary.uploader.upload_stream(
+                    (error, result) => {
+                        if (result) {
+                            resolve(result);
+                        } else {
+                            reject(error);
+                        }
+                    }
+
+                );
+
+                streamifier.createReadStream(req.file.buffer).pipe(stream);
+            });
+        };
+
+        async function upload(req) {
+            let result = await streamUpload(req);
+            console.log(result);
+            return result;
+        }
+
+        upload(req).then((uploaded) => {
+            req.body.featureImage = uploaded.url;
+
+            // TODO: Process the req.body and add it as a new Blog Post before redirecting to /posts
+         
+            });
+        }
+            blogService.addPost(req.body).then(() => {
+                res.redirect('/posts');
+        });
+
+    })
+
+
+app.get('/post/:value', (req,res) =>{
+    blogService.getPostById(req.params.value).then((data)=>{
+        res.json(data);
+    }).catch(error=>{
+        res.status(404).send("Error!");
+    })
+})
+
+
 
 app.use((req, res) => {
     res.status(404).send("Page Not Found")
