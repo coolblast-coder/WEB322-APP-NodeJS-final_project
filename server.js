@@ -6,7 +6,7 @@
 * 
 *  Name: Anton Lyapunov Student ID: 048687131 Date: 2022-02-20
 *
-*  Heroku App URL: ___________________________________________________________
+*  Heroku App URL: https://pacific-cliffs-09871.herokuapp.com/about
 * 
 *  GitHub Repository URL: https://github.com/coolblast-coder/WEB322-APP
 *
