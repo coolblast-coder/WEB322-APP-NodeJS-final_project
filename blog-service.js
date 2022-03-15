@@ -69,7 +69,9 @@ module.exports.getCategories = function () {
 
 module.exports.addPost = function (postData) {
 
-    return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
+        
+
         if (postData.published) {
             postData.published = true;
         }
@@ -77,11 +79,14 @@ module.exports.addPost = function (postData) {
             postData.published = false;
         }
         postData.id = (posts.length + 1);
+        postData.postDate = (new Date()).toISOString().split("T")[0];
+        
         posts.push(postData);
         resolve(postData);
-    })
-}
 
+    })
+
+}
 module.exports.getPostsByCategory = function (category) {
     return new Promise((resolve, reject) => {
         let categoryPost = posts.filter(a => a.category == category);
@@ -111,11 +116,30 @@ module.exports.getPostsByMinDate = function (minDateStr) {
 module.exports.getPostById = function (id) {
     return new Promise((resolve, reject) => {
         let idPost = posts.filter(a => a.id == id);
-if (idPost.length !=0){
-    resolve(idPost);
+        if (idPost.length != 0) {
+            resolve(idPost);
+        }
+        else {
+            reject("no results returned");
+        }
+    })
 }
-else{
-    reject("no results returned");
-}
+
+
+module.exports.getPublishedPostsByCategory = function (category) {
+    var publishedPost = [];
+
+    for (var i = 0; i < posts.length; i++) {
+        if (posts[i].published && post.category == category) {
+            publishedPost.push(posts[i])
+        }
+    }
+    return new Promise((resolve, reject) => {
+        if (publishedPost && publishedPost.length > 0) {
+            resolve(publishedPost);
+        } else {
+            reject("no results returned");
+        }
+
     })
 }
