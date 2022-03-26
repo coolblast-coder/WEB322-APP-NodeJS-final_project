@@ -1,10 +1,3 @@
-const { rejects } = require('assert');
-const fs = require('fs');
-const { resolve } = require('path/posix');
-
-let posts = [];
-let categories = [];
-
 module.exports.initialize = function () {
     return new Promise((resolve, reject) => {
         fs.readFile('./data/posts.json', 'utf-8', (err, data) => {
