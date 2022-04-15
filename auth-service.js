@@ -23,3 +23,55 @@ module.exports.initialize = function () {
         });
     });
 };
+
+
+module.exports.registerUser = function(userData) {
+    return new Promise((resolve, reject)=>{
+        if(userData.password != userData.password2){
+            reject("Passwords do not match");
+        }
+        else{
+            let newUser = new User(userData);
+            console.log(newUser);
+            newUser.save((err)=>{
+                if (err){
+                    if(err.code == 11000)
+                    reject("User Name already taken")
+                    else
+                    reject("There was an error creating the user: err" + err);
+                }
+                else
+                resolve();
+            });
+        }
+    })
+}
+
+module.exports.checkUser = function(userData){
+    return new Promise((resolve, request) =>{
+        User.find({userName: userData.userName}).exec().then((users)=>{
+            if(!users){
+                reject("Unable to find user: " + userData.userName);
+            }
+           if(userData.password == users[0].loginHistory){
+               console.log(users[0].loginHistory);
+               users[0].loginHistory.push({dateTime: (new Date()).toString(), userAgent: userData.userAgent});
+               console.log(users[0].loginHistory);
+
+               User.update(
+                   {userName: users[0].userName},
+                   {$set: {loginHistory:users[0].loginHistory}}
+               ).exec().then(()=>{
+                   resolve(users[0]);
+               }).catch((err)=>{
+                   reject("There was an error verifying the user: err" + err);
+               });
+           }
+           else{
+               console.log("Incorrect password for user: " + userData.userName);
+           }
+        }).catch((err)=>{
+            reject("Unable to find user: " + userData.userName)
+        })
+    })
+}
