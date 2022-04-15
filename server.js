@@ -1,10 +1,10 @@
 /*********************************************************************************
- *  WEB322 – Assignment 05
+ *  WEB322 – Assignment 06
  *  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part
  *  of this assignment has been copied manually or electronically from any other source
  *  (including 3rd party web sites) or distributed to other students.
  *
- *  Name: Anton Lyapunov Student ID: 048687131 Date: 2022-03-29
+ *  Name: Anton Lyapunov Student ID: 048687131 Date: 2022-04-15
  *
  *  Heroku App URL: https://pacific-cliffs-09871.herokuapp.com/
  *
@@ -21,6 +21,7 @@ const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
 const stripJs = require("strip-js");
 const blogService = require("./blog-service");
+const authData = require("./auth-service");
 
 const HTTP_PORT = process.env.PORT || 8080;
 const onHttptart = () =>
