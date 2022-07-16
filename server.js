@@ -257,7 +257,7 @@ app.post("/register", (req,res)=>{
 
 app.post("/login", (req,res)=>{
   req.body.userAgent = req.get('User-Agent');
-  authData.CheckUser(userData).then((user)=>{
+  authData.checkUser(req.body).then((user)=>{
     req.session.user = {
       userName: user.userName,
       email: user.email,
@@ -265,7 +265,7 @@ app.post("/login", (req,res)=>{
     }
     res.redirect('/posts');
   }).catch((err)=>{
-    res.render("register", {errorMessage: err, userName: req.body.userName});
+    res.render("login", {errorMessage: err, userName: req.body.userName});
   })
 })
 

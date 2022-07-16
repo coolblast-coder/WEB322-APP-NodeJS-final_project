@@ -57,7 +57,7 @@ module.exports.registerUser = function(userData) {
 }
 
 module.exports.checkUser = function(userData){
-    return new Promise((resolve, request) =>{
+    return new Promise((resolve, reject) =>{
         User.find({userName: userData.userName}).exec().then((users)=>{
             if(!users){
                 reject("Unable to find user: " + userData.userName);
